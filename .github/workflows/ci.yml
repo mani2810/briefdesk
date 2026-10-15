@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: "requirements*.txt"
+      - name: Install
+        run: pip install -r requirements-dev.txt
+      - name: Lint (rules in ruff.toml)
+        run: ruff check backend/app backend/tests mcp_server examples run.py
+      - name: Migrations apply cleanly
+        working-directory: backend
+        run: alembic upgrade head
+        env:
+          DATABASE_URL: sqlite:///./ci.db
+          ENVIRONMENT: test
+      - name: Tests (offline: scripted LLM + sample pages, no API key needed)
+        working-directory: backend
+        run: pytest -q
+      - name: Production config refuses unsafe defaults
+        working-directory: backend
+        run: |
+          ENVIRONMENT=production python -c "from app.core.config import Settings; Settings()" \
+            && { echo "expected failure"; exit 1; } || echo "ok: production refuses default secrets"

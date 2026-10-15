@@ -1,0 +1,10 @@
+{
+  "servers": {
+    "company_kb": {
+      "command": "python",
+      "args": ["examples/company_kb_mcp/server.py"],
+      "allowed_tools": ["search_company_docs"],
+      "description": "Internal company knowledge base (sample market and payments notes)"
+    }
+  }
+}

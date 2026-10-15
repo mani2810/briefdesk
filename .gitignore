@@ -1,0 +1,19 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.log
+.secrets/
+logs/
+# databases, generated files and backups (contain user data)
+*.db
+*.db-*
+*.sqlite
+backup-*
+backend/data/
+data/
+mcp_servers.json
+.claude/
+backend/data_demo/
