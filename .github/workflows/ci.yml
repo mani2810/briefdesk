@@ -32,7 +32,7 @@ jobs:
         env:
           DATABASE_URL: sqlite:///./ci.db
           ENVIRONMENT: test
-      - name: Tests (offline: scripted LLM + sample pages, no API key needed)
+      - name: "Tests (offline - scripted LLM and sample pages, no API key needed)"
         working-directory: backend
         run: pytest -q
       - name: Production config refuses unsafe defaults
